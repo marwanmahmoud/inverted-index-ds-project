@@ -1,13 +1,21 @@
 #include "invertedindex.h"
+#include <QTextStream>
+#include <QString>
+#include <fstream>
+#include <sstream>
+#include <QDebug>
+#include <QFile>
+#include <QDir>
+#include<string>
 
 int fileNumber = 0;
+extern QVector<QString> filesContent;
 
 string InvertedIndex::search(string data)
 {
     int depth = 0;
     node* temp = new node;
     temp = root;
-    int x = 0;
     // Run the loop untill temp points to a NULL pointer
     while (temp != NULL)
     {
@@ -15,15 +23,14 @@ string InvertedIndex::search(string data)
         if (temp->data == data)
         {
             set<string>::iterator it;
-            string occurence = "";
+            string occurence = "This Word Occured in " + to_string(temp->filename.size()) + " files\n\n";
+            occurence += "File Name\tFile Content\n\n";
             it = temp->filename.begin();
             while (it != temp->filename.end()) {
-                occurence= occurence + *it + ", ";
+                occurence += *it + "\t" + filesContent[QString::fromStdString(*it).toInt()].toStdString() + "\n";
                 it++;
             }
-            occurence = occurence.substr(0,occurence.length()-2);
             temp = temp->left;
-            x = 1;
             return occurence;
         }
         // Shift pointer to left child.
@@ -33,7 +40,7 @@ string InvertedIndex::search(string data)
         else
             temp = temp->right;
     }
-    return "#";
+    return "Can't find word";
 }
 node* CreateNode(string data, string filenamee)
 {
@@ -101,7 +108,12 @@ void InvertedIndex::addFile(string file)
     string currentLine;
     for(unsigned int i = 0 ; i<(file.length()-1);i++)
     {
-        if(file[i]==' ') {lines.push_back(currentLine);currentLine="";}
+        if(file[i]==' ') {
+            if(currentLine[currentLine.length() - 1] == '?')
+                currentLine = currentLine.substr(0, currentLine.length() - 1);
+            lines.push_back(currentLine);
+            currentLine="";
+        }
         else currentLine+=file[i];
     }
     lines.push_back(currentLine);

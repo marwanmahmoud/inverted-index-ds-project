@@ -11,12 +11,12 @@
 #include<sstream>
 #include <set>
 #include<invertedindex.h>
-using namespace std ;
+using namespace std;
 
 extern InvertedIndex tree;
 
 
-MainWindow1::MainWindow1(QWidget *parent) :
+MainWindow1::MainWindow1(QWidget *parent):
     QMainWindow(parent),
     ui(new Ui::MainWindow1)
 {
@@ -32,9 +32,7 @@ void MainWindow1::Read(QString q)
     QFile file(q);
     if(!file.open(QFile::ReadOnly|QFile::Text))
     {
-
-       QMessageBox::warning(this,"ERROR","coudlnt open file");
-
+       QMessageBox::warning(this,"ERROR","could not open " + q);
     }
     else
     {
@@ -49,9 +47,6 @@ void MainWindow1::on_actionAdd_triggered()
 {
     d=new Dialog();
     d->show();
-
-
-
 }
 
 void MainWindow1::on_pushButton_clicked()
@@ -61,9 +56,5 @@ void MainWindow1::on_pushButton_clicked()
     string str = qstr.toStdString();
 
     string occurence = tree.search(str);
-
-    if(occurence == "#")
-        QMessageBox::information(this,"NOT FOUND","Can't find word");
-    else
-        QMessageBox::information(this,"FOUND",QString::fromStdString("The word occurend in: " + occurence));
+    QMessageBox::information(this, "Result", QString::fromStdString(occurence));
 }

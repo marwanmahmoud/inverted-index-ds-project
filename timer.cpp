@@ -8,9 +8,5 @@ Timer::Timer()
 
 void Timer::myslot()
 {
-
-
-
-
 }
 

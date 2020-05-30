@@ -13,24 +13,7 @@
 using namespace std;
 
 InvertedIndex tree;
-
-void Dialog::Read(QString q)
-{
-    QFile file(q);
-    if(!file.open(QFile::ReadOnly|QFile::Text))
-    {
-
-       QMessageBox::warning(this,"ERROR","coudlnt open file");
-
-    }
-    else
-    {
-        QTextStream in(&file);
-        QString text=in.readAll();
-        tree.addFile(text.toStdString());
-        file.close();
-    }
-}
+QVector<QString> filesContent;
 
 Dialog::Dialog(QWidget *parent) : QDialog(parent), ui(new Ui::Dialog)
 {
@@ -52,6 +35,23 @@ Dialog::~Dialog()
     delete ui;
 }
 
+void Dialog::Read(QString q)
+{
+    QFile file(q);
+    if(!file.open(QFile::ReadOnly|QFile::Text))
+    {
+       QMessageBox::warning(this,"ERROR","could not open the file file " + q);
+    }
+    else
+    {
+        QTextStream in(&file);
+        QString text=in.readAll();
+        filesContent.push_back(text);
+        tree.addFile(text.toStdString());
+        file.close();
+    }
+}
+
 void Dialog::on_treeView_clicked(const QModelIndex &index)
 {
     QString spath =dirmodel->fileInfo(index).absoluteFilePath();
@@ -60,17 +60,13 @@ void Dialog::on_treeView_clicked(const QModelIndex &index)
 
 void Dialog::on_treeView_doubleClicked(const QModelIndex &index)
 {
-    int count=0;
-    QString spath =dirmodel->fileInfo(index).absoluteFilePath();
-    for(int i=0;i<6;i++)
-    {
+    QString spath = dirmodel->fileInfo(index).absoluteFilePath();
+    QDir directory(spath);
+    QStringList files = directory.entryList(QStringList() << "*.txt" << "*.TXT",QDir::Files);
+    foreach(QString filename, files) {
         hide();
-        QString s=QString::number(count);
-        QString e="/";
-        QString h=".txt";
-        QString tpath=spath+e+s+h;
+        QString tpath = spath + "/" + filename;
         Read(tpath);
-        count++;
     }
 }
 

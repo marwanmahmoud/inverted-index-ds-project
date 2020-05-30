@@ -25,7 +25,6 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_2_clicked()
 {
     hide();
-    m=new MainWindow1();
+    m = new MainWindow1();
     m->show();
-
 }
